@@ -1,5 +1,5 @@
-import express from "express";
-import Serverless from "serverless-http";
+import express from 'express';
+import Serverless from 'serverless-http';
 import dotenv from 'dotenv';
 import cors from 'cors';
 // import { OpenAI } from 'openai';
@@ -17,39 +17,42 @@ app.use(cors());
 app.use(express.json());
 
 // GET / - Hello world endpoint
-app.get("/", (_req: Request, res: Response): void => {
-  res.send("Hello World from Express serverless!");
+app.get('/', (_req: Request, res: Response): void => {
+  res.send('Hello World from Express serverless!');
 });
 
 // GET /conversations - Fetch all conversations from the database
-// app.get('/conversations', async (req, res) => {
-//   let conversations;
+app.get('/conversations', async (req, res) => {
+  let conversations;
 
-//   try {
-//     if (process.env["CHAT_APP_DATABASE_URL"]) {
-//       await connectToDatabase();
-//       conversations = await Conversation.find()
-//       const messages = await Message.find();
+  try {
+    if (process.env['CHAT_APP_DATABASE_URL']) {
+      await connectToDatabase();
+      conversations = await Conversation.find();
+      const messages = await Message.find();
 
-//       conversations = conversations.map(conversation => {
-//         const conversationMessages = messages.filter(
-//           message => message.conversationId === conversation.conversationId
-//         );
-//         return { ...conversation.toObject(), messages: conversationMessages };
-//       });
-//       console.log("Connected to the database and fetched conversations.");
-//     } else {
-//       console.warn("No database URL provided, returning mock data.");
-//       conversations = mockConversations;
-//     }
-//   } catch (error) {
-//     console.warn("Could not connect to the database, returning mock data.", error);
-//     conversations = mockConversations;
-//   }
+      conversations = conversations.map((conversation) => {
+        const conversationMessages = messages.filter(
+          (message) => message.conversationId === conversation.conversationId
+        );
+        return { ...conversation.toObject(), messages: conversationMessages };
+      });
+      console.log('Connected to the database and fetched conversations.');
+    } else {
+      console.warn('No database URL provided, returning mock data.');
+      conversations = mockConversations;
+    }
+  } catch (error) {
+    console.warn(
+      'Could not connect to the database, returning mock data.',
+      error
+    );
+    conversations = mockConversations;
+  }
 
-//   res.json({ conversations });
-//   return;
-// });
+  res.json({ conversations });
+  return;
+});
 
 // GET /conversations/:conversationId - Fetch messages from a specific conversation
 // app.get('/conversations/:conversationId', async (req: Request, res:Response) => {
@@ -77,7 +80,6 @@ app.get("/", (_req: Request, res: Response): void => {
 //   res.json({ messages });
 //   return;
 // });
-
 
 // POST /conversations/:conversationId/messages - Add a pair of messages (human and AI)
 // app.post('/conversations/:conversationId/messages', async (req: Request, res:Response) => {
@@ -158,16 +160,19 @@ app.get("/", (_req: Request, res: Response): void => {
 
 // DELETE /conversations/:conversationId - Delete a conversation and its messages
 // TODO Implement the logic for this endpoint
-app.delete('/conversations/:conversationId', async (req: Request, res:Response) => {
-  res.json({ message: "not implemented" });
-  return;
-});
+app.delete(
+  '/conversations/:conversationId',
+  async (req: Request, res: Response) => {
+    res.json({ message: 'not implemented' });
+    return;
+  }
+);
 
 // You don't need to listen to the port when using serverless functions in production
-if (process.env.NODE_ENV === "dev") {
+if (process.env.NODE_ENV === 'dev') {
   app.listen(3000, () => {
     console.log(
-      "Server is running on port 3000. Check the app on http://localhost:3000"
+      'Server is running on port 3000. Check the app on http://localhost:3000'
     );
   });
 }
